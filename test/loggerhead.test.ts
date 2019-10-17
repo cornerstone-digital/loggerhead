@@ -1,9 +1,13 @@
 import Loggerhead, { LoggerheadConfig, LogLevels } from '../src/loggerhead'
+import * as dayjs from 'dayjs'
+
+// jest.mock('dayjs')
 
 const defaultConfig: LoggerheadConfig = {
   namespace: 'test',
   enabled: true,
-  level: 0
+  level: 0,
+  timeStampFormat: 'YYYY-MM-DD HH:mm'
 }
 
 const callDebugLevels = (logger: Loggerhead) => {
@@ -15,10 +19,11 @@ const callDebugLevels = (logger: Loggerhead) => {
   logger.trace('TRACE')
 }
 
-const createLogger = (level: LogLevels) => {
+const createLogger = (level: LogLevels, timeStamp: boolean = false) => {
   const loggerConfig: LoggerheadConfig = {
     ...defaultConfig,
-    level
+    level,
+    timeStamp
   }
 
   return new Loggerhead(loggerConfig)
@@ -118,6 +123,20 @@ describe('Loggerhead', () => {
 
       callDebugLevels(logger)
       expect(spy).toBeCalledTimes(6)
+    })
+  })
+  describe('getTimeStamp()', () => {
+    it('Should return time stamp correctly formated by default', () => {
+      const logger = createLogger(LogLevels.INFO, true)
+      const spy = jest.spyOn(logger, 'instance')
+      logger.info('test')
+      expect(spy).toBeCalledWith(
+        dayjs()
+          .format(defaultConfig.timeStampFormat)
+          .toString(),
+        'INFO',
+        'test'
+      )
     })
   })
 })

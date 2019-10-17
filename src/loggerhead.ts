@@ -1,15 +1,12 @@
-// Import here Polyfills if needed. Recommended core-js (npm i -D core-js)
-// import "core-js/fn/array.find"
-// ...
-
 import debug, { IDebugger } from 'debug'
-import dayjs from 'dayjs'
-import dayjsPluginUTC from 'dayjs-plugin-utc'
+import * as dayjs from 'dayjs'
 
 export interface LoggerheadConfig {
   namespace: string
   enabled: boolean
   level: LogLevels
+  timeStamp?: boolean
+  timeStampFormat?: string
 }
 
 export enum LogLevels {
@@ -27,12 +24,16 @@ export default class Loggerhead {
   private _config: LoggerheadConfig
   public instance: IDebugger
   private level: LogLevels
+  private timestamp: boolean
+  private timestampFormat: string
+
   constructor(config: LoggerheadConfig) {
     this._config = config
     this.instance = debug(config.namespace)
     this.instance.enabled = config.enabled
     this.level = config.level
-
+    this.timestamp = config.timeStamp ? config.timeStamp : false
+    this.timestampFormat = config.timeStampFormat ? config.timeStampFormat : 'YYYY-MM-DD HH:mm:ss'
     return this
   }
 
@@ -43,7 +44,7 @@ export default class Loggerhead {
   public trace(...args: any | any[]): void {
     if (this.loggingEnabled() && this.level >= LogLevels.TRACE) {
       args.unshift(LogLevels[LogLevels.INFO])
-      // args.unshift(this.getTimestamp(timestampFormat))
+      this.timestamp && args.unshift(this.getTimestamp())
       this.instance.apply(this, args)
     }
   }
@@ -51,7 +52,7 @@ export default class Loggerhead {
   public info(...args: any | any[]): void {
     if (this.loggingEnabled() && this.level >= LogLevels.INFO) {
       args.unshift(LogLevels[LogLevels.INFO])
-      // args.unshift(this.getTimestamp(timestampFormat))
+      this.timestamp && args.unshift(this.getTimestamp())
       this.instance.apply(this, args)
     }
   }
@@ -59,7 +60,7 @@ export default class Loggerhead {
   public debug(...args: any | any[]): void {
     if (this.loggingEnabled() && this.level >= LogLevels.DEBUG) {
       args.unshift(LogLevels[LogLevels.INFO])
-      // args.unshift(this.getTimestamp(timestampFormat))
+      this.timestamp && args.unshift(this.getTimestamp())
       this.instance.apply(this, args)
     }
   }
@@ -67,7 +68,7 @@ export default class Loggerhead {
   public warn(...args: any | any[]): void {
     if (this.loggingEnabled() && this.level >= LogLevels.WARN) {
       args.unshift(LogLevels[LogLevels.INFO])
-      // args.unshift(this.getTimestamp(timestampFormat))
+      this.timestamp && args.unshift(this.getTimestamp())
       this.instance.apply(this, args)
     }
   }
@@ -75,7 +76,7 @@ export default class Loggerhead {
   public error(...args: any | any[]): void {
     if (this.loggingEnabled() && this.level >= LogLevels.ERROR) {
       args.unshift(LogLevels[LogLevels.INFO])
-      // args.unshift(this.getTimestamp(timestampFormat))
+      this.timestamp && args.unshift(this.getTimestamp())
       this.instance.apply(this, args)
     }
   }
@@ -83,13 +84,12 @@ export default class Loggerhead {
   public fatal(...args: any | any[]): void {
     if (this.loggingEnabled() && this.level >= LogLevels.FATAL) {
       args.unshift(LogLevels[LogLevels.INFO])
-      // args.unshift(this.getTimestamp(timestampFormat))
+      this.timestamp && args.unshift(this.getTimestamp())
       this.instance.apply(this, args)
     }
   }
 
-  private getTimestamp(format: string) {
-    dayjs.extend(dayjsPluginUTC)
-    return dayjs.utc().format(format)
+  private getTimestamp() {
+    return dayjs().format(this.timestampFormat)
   }
 }
