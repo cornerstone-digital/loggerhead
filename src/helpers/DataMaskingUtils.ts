@@ -17,10 +17,16 @@ const defaultRules: DataMaskingRule[] = [
   {
     name: 'phone',
     type: 'RegEx',
+    matchValue: new RegExp(/\b(?:0|\+?44|\+?44\s)(?:\d\s?){9,12}\b/gi),
+    replaceWith: '***** ******'
+  },
+  {
+    name: 'postcode',
+    type: 'RegEx',
     matchValue: new RegExp(
-      /s*(([+](s?d)([-s]?d)|0)?(s?d)([-s]?d){9}|[(](s?d)([-s]?d)+s*[)]([-s]?d)+)s*/gi
+      /\b([A-PR-UWYZ][A-HK-Y0-9](?:[A-HJKS-UW0-9][ABEHMNPRV-Y0-9]?)?\s*[0-9][ABD-HJLNP-UW-Z]{2}|GIR\s*0AA)\b/gi
     ),
-    replaceWith: '***********'
+    replaceWith: '**** ***'
   }
 ]
 
@@ -74,17 +80,18 @@ class DataMaskingUtils {
   }
 
   private replaceKeyValues(input: string, maskingRule: DataMaskingRule) {
+    console.log(input)
     const flattened: any = flat(JSON.parse(input))
 
     Object.keys(flattened).forEach(key => {
       const endKey = key.split('.').pop()
       if (endKey) {
-        if (maskingRule.type === 'keyName' && endKey === maskingRule.matchValue) {
+        if (maskingRule.type === 'Key' && endKey === maskingRule.matchValue) {
           flattened[key] = maskingRule.replaceWith
         }
 
         if (
-          maskingRule.type === 'keyNameIncludes' &&
+          maskingRule.type === 'KeyIncludes' &&
           endKey.toLowerCase().includes(maskingRule.matchValue)
         ) {
           flattened[key] = maskingRule.replaceWith
@@ -121,9 +128,11 @@ class DataMaskingUtils {
       return
     }
 
-    let data = this.isJson(input) ? JSON.parse(input) : input
-    const dataString = this.isJson(data) ? JSON.stringify(data) : data
-    data = this.applyMaskingRules(dataString)
+    let data = this.isJson(input) ? input : JSON.stringify(input)
+    // const dataString = this.isJson(data) ? JSON.stringify(data) : data
+    console.log('cleanseData', data)
+    data = this.applyMaskingRules(data)
+    console.log('cleaned', data)
 
     return data
   }
