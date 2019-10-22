@@ -1,4 +1,4 @@
-import * as flat from 'flat'
+import * as flatUtil from 'flat'
 import { DataMaskingRule, DataMaskingConfig } from '../types/loggerhead.types'
 
 const defaultRules: DataMaskingRule[] = [
@@ -80,7 +80,7 @@ class DataMaskingUtils {
   }
 
   private replaceKeyValues(input: string, maskingRule: DataMaskingRule) {
-    const flattened: any = flat(JSON.parse(input))
+    const flattened: any = flatUtil(JSON.parse(input))
 
     Object.keys(flattened).forEach(key => {
       const endKey = key.split('.').pop()
@@ -98,7 +98,7 @@ class DataMaskingUtils {
       }
     })
 
-    const parsed = flat.unflatten(flattened)
+    const parsed = flatUtil.unflatten(flattened)
 
     return JSON.stringify(parsed)
   }
