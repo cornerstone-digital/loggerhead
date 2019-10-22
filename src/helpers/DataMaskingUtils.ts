@@ -1,4 +1,4 @@
-import * as flatUtil from 'flat'
+const flatUtil = require('flat')
 import { DataMaskingRule, DataMaskingConfig } from '../types/loggerhead.types'
 
 const defaultRules: DataMaskingRule[] = [
