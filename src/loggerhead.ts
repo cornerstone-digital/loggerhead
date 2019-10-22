@@ -1,9 +1,9 @@
 import debug, { IDebugger } from 'debug'
-import * as dayjs from 'dayjs'
 import { LoggerheadConfig, LogLevels } from './types/loggerhead.types'
 import getConfig from './config/validator'
 import { ErrorObject } from 'ajv'
 import DataMaskingUtils from './helpers/DataMaskingUtils'
+const dayjs = require('dayjs')
 
 interface ConfigErrorObj {
   obj: any
