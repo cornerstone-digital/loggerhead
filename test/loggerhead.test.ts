@@ -3,12 +3,12 @@ import * as dayjs from 'dayjs'
 import { LogLevels, LoggerheadConfig } from '../src/types/loggerhead.types'
 import getConfig from '../src/config/validator'
 
-// jest.mock('debug', () => ({
-//   default: () => () => ({
-//     log: jest.fn(),
-//     enabled: true
-//   })
-// }))
+jest.mock('debug', () => ({
+  default: () => () => ({
+    log: jest.fn(),
+    enabled: true
+  })
+}))
 
 const defaultConfig: LoggerheadConfig = getConfig({
   namespace: 'test',
@@ -46,7 +46,7 @@ const createLogger = (config?: LoggerheadConfig) => {
 
 const logger = createLogger()
 
-describe.skip('Loggerhead', () => {
+describe('Loggerhead', () => {
   it('Should return a new Loggerhead instance', () => {
     const loggerConfig = {
       ...defaultConfig

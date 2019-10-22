@@ -66,9 +66,9 @@ class DataMaskingUtils {
   }
 
   private isJson(str: any) {
-    if (['string', 'number', 'boolean'].includes(typeof str)) {
-      return false
-    }
+    // if (['string', 'number', 'boolean'].includes(typeof str)) {
+    //   return false
+    // }
 
     try {
       JSON.parse(str)
@@ -80,7 +80,6 @@ class DataMaskingUtils {
   }
 
   private replaceKeyValues(input: string, maskingRule: DataMaskingRule) {
-    console.log(input)
     const flattened: any = flat(JSON.parse(input))
 
     Object.keys(flattened).forEach(key => {
@@ -129,10 +128,7 @@ class DataMaskingUtils {
     }
 
     let data = this.isJson(input) ? input : JSON.stringify(input)
-    // const dataString = this.isJson(data) ? JSON.stringify(data) : data
-    console.log('cleanseData', data)
     data = this.applyMaskingRules(data)
-    console.log('cleaned', data)
 
     return data
   }
