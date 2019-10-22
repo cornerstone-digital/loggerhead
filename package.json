@@ -12,7 +12,7 @@
   "author": "Martin Egan <martingegan@gmail.com>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/cornerstone-digital/loggerhead"
   },
   "license": "MIT",
   "engines": {
@@ -32,7 +32,9 @@
     "semantic-release": "semantic-release",
     "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
     "precommit": "lint-staged",
-    "travis-deploy-once": "travis-deploy-once"
+    "travis-deploy-once": "travis-deploy-once",
+    "prepush": "npm run test:prod && npm run build",
+    "commitmsg": "commitlint -E HUSKY_GIT_PARAMS"
   },
   "lint-staged": {
     "{src,test}/**/*.ts": [
@@ -84,7 +86,9 @@
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
+    "@types/ajv": "^1.0.0",
     "@types/debug": "^4.1.5",
+    "@types/flat": "^0.0.28",
     "@types/jest": "^24.0.19",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.11.1",
@@ -108,7 +112,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript2": "^0.24.3",
-    "semantic-release": "^15.13.24",
+    "semantic-release": "^15.13.27",
     "shelljs": "^0.8.3",
     "travis-deploy-once": "^5.0.11",
     "ts-jest": "^24.1.0",
@@ -120,8 +124,10 @@
     "typescript": "^3.6.4"
   },
   "dependencies": {
+    "ajv": "^6.10.2",
     "dayjs": "^1.8.16",
     "dayjs-plugin-utc": "^0.1.2",
-    "debug": "^4.1.1"
+    "debug": "^4.1.1",
+    "flat": "^4.1.0"
   }
 }

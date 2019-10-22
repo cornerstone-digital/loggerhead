@@ -1,23 +1,13 @@
 import debug, { IDebugger } from 'debug'
 import * as dayjs from 'dayjs'
+import { LoggerheadConfig, LogLevels } from './types/loggerhead.types'
+import getConfig from './config/validator'
+import { ErrorObject } from 'ajv'
+import DataMaskingUtils from './helpers/DataMaskingUtils'
 
-export interface LoggerheadConfig {
-  namespace: string
-  enabled: boolean
-  level: LogLevels
-  timeStamp?: boolean
-  timeStampFormat?: string
-}
-
-export enum LogLevels {
-  OFF = 0,
-  FATAL = 1,
-  ERROR = 2,
-  WARN = 3,
-  INFO = 4,
-  DEBUG = 5,
-  TRACE = 6,
-  ALL = 7
+interface ConfigErrorObj {
+  obj: any
+  errors: ErrorObject[] | null | undefined
 }
 
 export default class Loggerhead {
@@ -26,14 +16,27 @@ export default class Loggerhead {
   private level: LogLevels
   private timestamp: boolean
   private timestampFormat: string
+  private masker: DataMaskingUtils | null = null
 
-  constructor(config: LoggerheadConfig) {
-    this._config = config
-    this.instance = debug(config.namespace)
-    this.instance.enabled = config.enabled
-    this.level = config.level
-    this.timestamp = config.timeStamp ? config.timeStamp : false
-    this.timestampFormat = config.timeStampFormat ? config.timeStampFormat : 'YYYY-MM-DD HH:mm:ss'
+  constructor(config: object) {
+    const configObj: any | ConfigErrorObj | LoggerheadConfig = getConfig(config)
+
+    if (configObj.errors && Array.isArray(configObj.errors)) {
+      console.error(configObj.errors)
+      process.exit()
+    }
+
+    this._config = configObj
+    this.instance = debug(configObj.namespace)
+    this.instance.enabled = configObj.enabled
+    this.level = configObj.level
+    this.timestamp = configObj.timeStamp ? configObj.timeStamp : false
+    this.timestampFormat = configObj.timeStampFormat
+
+    if (this._config.masking && this._config.masking.enabled) {
+      this.masker = new DataMaskingUtils(this._config.masking)
+    }
+
     return this
   }
 
@@ -41,51 +44,48 @@ export default class Loggerhead {
     return this._config.enabled
   }
 
-  public trace(...args: any | any[]): void {
-    if (this.loggingEnabled() && this.level >= LogLevels.TRACE) {
-      args.unshift(LogLevels[LogLevels.INFO])
+  public log(level: LogLevels, ...args: any | any[]) {
+    if (this.loggingEnabled() && this.level >= level) {
+      args = this.cleanArgs(...args)
+      args.unshift(LogLevels[level])
       this.timestamp && args.unshift(this.getTimestamp())
-      this.instance.apply(this, args)
+      this.instance('%j', ...args)
     }
+  }
+
+  public trace(...args: any | any[]): void {
+    this.log(LogLevels.TRACE, ...args)
   }
 
   public info(...args: any | any[]): void {
-    if (this.loggingEnabled() && this.level >= LogLevels.INFO) {
-      args.unshift(LogLevels[LogLevels.INFO])
-      this.timestamp && args.unshift(this.getTimestamp())
-      this.instance.apply(this, args)
-    }
+    this.log(LogLevels.INFO, ...args)
   }
 
   public debug(...args: any | any[]): void {
-    if (this.loggingEnabled() && this.level >= LogLevels.DEBUG) {
-      args.unshift(LogLevels[LogLevels.INFO])
-      this.timestamp && args.unshift(this.getTimestamp())
-      this.instance.apply(this, args)
-    }
+    this.log(LogLevels.DEBUG, ...args)
   }
 
   public warn(...args: any | any[]): void {
-    if (this.loggingEnabled() && this.level >= LogLevels.WARN) {
-      args.unshift(LogLevels[LogLevels.INFO])
-      this.timestamp && args.unshift(this.getTimestamp())
-      this.instance.apply(this, args)
-    }
+    this.log(LogLevels.WARN, ...args)
   }
 
   public error(...args: any | any[]): void {
-    if (this.loggingEnabled() && this.level >= LogLevels.ERROR) {
-      args.unshift(LogLevels[LogLevels.INFO])
-      this.timestamp && args.unshift(this.getTimestamp())
-      this.instance.apply(this, args)
-    }
+    this.log(LogLevels.ERROR, ...args)
   }
 
   public fatal(...args: any | any[]): void {
-    if (this.loggingEnabled() && this.level >= LogLevels.FATAL) {
-      args.unshift(LogLevels[LogLevels.INFO])
-      this.timestamp && args.unshift(this.getTimestamp())
-      this.instance.apply(this, args)
+    this.log(LogLevels.FATAL, ...args)
+  }
+
+  private cleanArgs(...args: any | any[]) {
+    if (this._config.masking.enabled && this.masker) {
+      args = args.map((arg: any) => {
+        return this.masker ? this.masker.cleanseData(arg) : arg
+      })
+
+      return args
+    } else {
+      return args
     }
   }
 

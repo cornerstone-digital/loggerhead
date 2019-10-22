@@ -1,74 +1,77 @@
-import Loggerhead, { LoggerheadConfig, LogLevels } from '../src/loggerhead'
+import Loggerhead from '../src/loggerhead'
 import * as dayjs from 'dayjs'
+import { LogLevels, LoggerheadConfig } from '../src/types/loggerhead.types'
+import getConfig from '../src/config/validator'
 
-// jest.mock('dayjs')
+jest.mock('debug', () => ({
+  default: () => () => ({
+    log: jest.fn(),
+    enabled: true
+  })
+}))
 
-const defaultConfig: LoggerheadConfig = {
+const defaultConfig: LoggerheadConfig = getConfig({
   namespace: 'test',
   enabled: true,
   level: 0,
-  timeStampFormat: 'YYYY-MM-DD HH:mm'
-}
+  timeStampFormat: 'YYYY-MM-DD HH:mm',
+  masking: {
+    enabled: true,
+    enableDefaults: {
+      email: true
+    }
+  }
+})
+
+const logMessage = 'Test log message'
 
 const callDebugLevels = (logger: Loggerhead) => {
-  logger.fatal('FATAL')
-  logger.error('ERROR')
-  logger.warn('WARN')
-  logger.info('INFO')
-  logger.debug('DEBUG')
-  logger.trace('TRACE')
+  logger.fatal(logMessage)
+  logger.error(logMessage)
+  logger.warn(logMessage)
+  logger.info(logMessage)
+  logger.debug(logMessage)
+  logger.trace(logMessage)
 }
 
-const createLogger = (level: LogLevels, timeStamp: boolean = false) => {
+const createLogger = (config: LoggerheadConfig) => {
   const loggerConfig: LoggerheadConfig = {
     ...defaultConfig,
-    level,
-    timeStamp
+    ...config
   }
 
   return new Loggerhead(loggerConfig)
 }
 
-/**
- * Dummy test
- */
-describe('Functionallity test', () => {
-  it('works if true is truthy', () => {
-    expect(true).toBeTruthy()
-  })
-
-  it('DummyClass is instantiable', () => {
-    const loggerConfig = {
-      ...defaultConfig,
-      level: 1
-    }
-
-    expect(new Loggerhead(loggerConfig)).toBeInstanceOf(Loggerhead)
-  })
-})
-
 describe('Loggerhead', () => {
+  it('Should return a new Loggerhead instance', () => {
+    const loggerConfig = {
+      ...defaultConfig
+    }
+    const logger = createLogger(loggerConfig)
+    expect(logger).toBeInstanceOf(Loggerhead)
+  })
   describe('logginEnabled()', () => {
     it('Should be enabled by default', () => {
-      const LoggerheadConfig = { ...defaultConfig }
-      const instance = new Loggerhead(LoggerheadConfig)
-
-      expect(instance.loggingEnabled()).toBe(true)
+      const loggerConfig = {
+        ...defaultConfig
+      }
+      const logger = createLogger(loggerConfig)
+      expect(logger.loggingEnabled()).toBe(true)
     })
 
     it('Should return false if disabled', () => {
-      const LoggerheadConfig = { ...defaultConfig, enabled: false }
-      const instance = new Loggerhead(LoggerheadConfig)
-
-      expect(instance.loggingEnabled()).toBe(false)
+      const loggerConfig = { ...defaultConfig, enabled: false }
+      const logger = createLogger(loggerConfig)
+      expect(logger.loggingEnabled()).toBe(false)
     })
   })
 
   describe('OFF mode', () => {
     it('should not call debugger for any level', () => {
-      const logger = createLogger(LogLevels.OFF)
+      const loggerConfig = { ...defaultConfig, level: LogLevels.OFF }
+      const logger = createLogger(loggerConfig)
       const spy = jest.spyOn(logger, 'instance')
-
       callDebugLevels(logger)
       expect(spy).toBeCalledTimes(0)
     })
@@ -76,66 +79,79 @@ describe('Loggerhead', () => {
 
   describe('logLevels', () => {
     it('Fatal', () => {
-      const logger = createLogger(LogLevels.FATAL)
+      const loggerConfig = { ...defaultConfig, level: LogLevels.FATAL }
+      const logger = createLogger(loggerConfig)
       const spy = jest.spyOn(logger, 'instance')
-
       callDebugLevels(logger)
       expect(spy).toBeCalledTimes(1)
     })
-    it('Error', () => {
-      const logger = createLogger(LogLevels.ERROR)
-      const spy = jest.spyOn(logger, 'instance')
 
+    it('Error', () => {
+      const loggerConfig = { ...defaultConfig, level: LogLevels.ERROR }
+      const logger = createLogger(loggerConfig)
+      const spy = jest.spyOn(logger, 'instance')
       callDebugLevels(logger)
       expect(spy).toBeCalledTimes(2)
     })
-    it('Warn', () => {
-      const logger = createLogger(LogLevels.WARN)
-      const spy = jest.spyOn(logger, 'instance')
 
+    it('Warn', () => {
+      const loggerConfig = { ...defaultConfig, level: LogLevels.WARN }
+      const logger = createLogger(loggerConfig)
+      const spy = jest.spyOn(logger, 'instance')
       callDebugLevels(logger)
       expect(spy).toBeCalledTimes(3)
     })
-    it('Info', () => {
-      const logger = createLogger(LogLevels.INFO)
-      const spy = jest.spyOn(logger, 'instance')
 
+    it('Info', () => {
+      const loggerConfig = { ...defaultConfig, level: LogLevels.INFO }
+      const logger = createLogger(loggerConfig)
+      const spy = jest.spyOn(logger, 'instance')
       callDebugLevels(logger)
       expect(spy).toBeCalledTimes(4)
     })
-    it('Debug', () => {
-      const logger = createLogger(LogLevels.DEBUG)
-      const spy = jest.spyOn(logger, 'instance')
 
+    it('Debug', () => {
+      const loggerConfig = { ...defaultConfig, level: LogLevels.DEBUG }
+      const logger = createLogger(loggerConfig)
+      const spy = jest.spyOn(logger, 'instance')
       callDebugLevels(logger)
       expect(spy).toBeCalledTimes(5)
     })
-    it('Trace', () => {
-      const logger = createLogger(LogLevels.TRACE)
-      const spy = jest.spyOn(logger, 'instance')
 
+    it('Trace', () => {
+      const loggerConfig = { ...defaultConfig, level: LogLevels.TRACE }
+      const logger = createLogger(loggerConfig)
+      const spy = jest.spyOn(logger, 'instance')
       callDebugLevels(logger)
       expect(spy).toBeCalledTimes(6)
     })
-    it('All', () => {
-      const logger = createLogger(LogLevels.ALL)
-      const spy = jest.spyOn(logger, 'instance')
 
+    it('All', () => {
+      const loggerConfig = { ...defaultConfig, level: LogLevels.ALL }
+      const logger = createLogger(loggerConfig)
+      const spy = jest.spyOn(logger, 'instance')
       callDebugLevels(logger)
       expect(spy).toBeCalledTimes(6)
     })
   })
+
   describe('getTimeStamp()', () => {
-    it('Should return time stamp correctly formated by default', () => {
-      const logger = createLogger(LogLevels.INFO, true)
+    it('Should return timestamp correctly', () => {
+      const loggerConfig = {
+        ...defaultConfig,
+        level: LogLevels.ALL
+      }
+      const logger = createLogger(loggerConfig)
       const spy = jest.spyOn(logger, 'instance')
-      logger.info('test')
-      expect(spy).toBeCalledWith(
+      logger.info(logMessage)
+
+      expect(spy).toHaveBeenCalledWith(
+        '%j',
         dayjs()
           .format(defaultConfig.timeStampFormat)
           .toString(),
         'INFO',
-        'test'
+        logMessage
       )
     })
   })
