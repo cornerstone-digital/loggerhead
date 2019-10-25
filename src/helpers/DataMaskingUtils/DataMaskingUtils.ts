@@ -27,6 +27,12 @@ const defaultRules: DataMaskingRule[] = [
       /\b([A-PR-UWYZ][A-HK-Y0-9](?:[A-HJKS-UW0-9][ABEHMNPRV-Y0-9]?)?\s*[0-9][ABD-HJLNP-UW-Z]{2}|GIR\s*0AA)\b/gi
     ),
     replaceWith: '**** ***'
+  },
+  {
+    name: 'jwt',
+    type: 'RegEx',
+    matchValue: new RegExp(/[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/gi),
+    replaceWith: '*********'
   }
 ]
 
@@ -127,9 +133,9 @@ class DataMaskingUtils {
         cleaned = this.replaceKeyValues(cleaned, maskingRule)
       }
 
-      if (maskingRule.type === 'RegEx') {
+      if (['RegEx', 'LogIncludes'].includes(maskingRule.type)) {
         if (cleaned.replace) {
-          cleaned = cleaned.replace(maskingRule.matchValue, maskingRule.replaceWith)
+          cleaned = cleaned.toLowerCase().replace(maskingRule.matchValue, maskingRule.replaceWith)
         }
       }
     })

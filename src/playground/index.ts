@@ -20,12 +20,22 @@ const config: LoggerheadConfig = {
         type: 'KeyIncludes',
         matchValue: 'id',
         replaceWith: '*********'
+      },
+      {
+        name: 'jwt',
+        type: 'RegEx',
+        matchValue: new RegExp(/[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/gi),
+        replaceWith: '*********'
       }
     ]
   }
 }
 
 const logger: Loggerhead = new Loggerhead(config)
+
+logger.info(
+  '"decryptedToken eyJhbGciOiJIUzI1NiJ9.eyJwbGF0Zm9ybV9zZXNzaW9uX2lkIjoiNzYxZjRlMjAtZDkwNC00MmZhLTlhYjktNzA3MmUwMDAwZDZmIiwiYXNzdXJhbmNlX2xldmVsIjoiMCIsImp0aSI6IkVTSE9QIiwiaWF0IjoxNTcxOTg3MTI4LCJzdWIiOiJhdXRob3JpemF0aW9uIiwiaXNzIjoiREFMIiwiZXhwIjoxNTcyMDczNTI4fQ.H7H3mkUmp-99DXSmht6Eu7-3a7Oq2OYtL_CHqQ8g_z8'
+)
 
 logger.info({
   someId: '121212121212',

@@ -19,7 +19,8 @@ const configSchema = {
             email: { type: 'boolean', default: false },
             phone: { type: 'boolean', default: false },
             postcode: { type: 'boolean', default: false },
-            password: { type: 'boolean', default: false }
+            password: { type: 'boolean', default: false },
+            jwt: { type: 'boolean', default: false }
           }
         },
         rules: {

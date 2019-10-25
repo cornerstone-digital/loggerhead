@@ -1,4 +1,4 @@
-type MaskingRuleTypes = 'Key' | 'KeyIncludes' | 'KeyIncludesOneOf' | 'RegEx'
+type MaskingRuleTypes = 'Key' | 'KeyIncludes' | 'KeyIncludesOneOf' | 'LogIncludes' | 'RegEx'
 
 export interface DataMaskingRule {
   name: string
@@ -15,6 +15,7 @@ export interface DataMaskingConfig {
     phone?: boolean
     password?: boolean
     postcode?: boolean
+    jwt?: boolean
   }
   rules: DataMaskingRule[]
 }
