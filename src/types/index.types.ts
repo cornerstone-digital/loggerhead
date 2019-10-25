@@ -1,4 +1,4 @@
-type MaskingRuleTypes = 'Key' | 'KeyIncludes' | 'KeyIncludesOneOf' | 'LogIncludes' | 'RegEx'
+type MaskingRuleTypes = 'Key' | 'KeyIncludes' | 'KeyIncludesOneOf' | 'RegEx'
 
 export interface DataMaskingRule {
   name: string
