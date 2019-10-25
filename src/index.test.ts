@@ -1,15 +1,17 @@
 import Loggerhead from './index'
 import { LoggerheadConfig, LogLevels } from './types/index.types'
-import getConfig from './config/validator'
+import MockDate from 'mockdate'
 
-// jest.mock('debug', () => ({
-//   default: () => ({
-//     log: jest.fn(),
-//     enabled: true
-//   })
-// }))
+const timestamp = '2019-10-25 06:41'
+beforeEach(() => {
+  MockDate.set(new Date(timestamp))
+})
 
-const defaultConfig: LoggerheadConfig = getConfig({
+afterEach(() => {
+  MockDate.reset()
+})
+
+const defaultConfig: LoggerheadConfig = {
   namespace: 'test',
   enabled: true,
   level: LogLevels.ALL,
@@ -22,7 +24,7 @@ const defaultConfig: LoggerheadConfig = getConfig({
     },
     rules: []
   }
-})
+}
 
 const logMessage = 'Test log message'
 
@@ -71,6 +73,28 @@ describe('Loggerhead', () => {
       const loggerConfig = { ...defaultConfig, enabled: false }
       const logger = createLogger(loggerConfig)
       expect(logger.loggingEnabled()).toBe(false)
+    })
+  })
+
+  describe('getTimestamp()', () => {
+    it('Should return a formatted date string', () => {
+      const loggerConfig = {
+        ...defaultConfig
+      }
+
+      const logger = createLogger(loggerConfig)
+      expect(logger.getTimestamp()).toEqual(timestamp)
+    })
+  })
+
+  describe('getConfig()', () => {
+    it('Should return the current configuration', () => {
+      const loggerConfig = {
+        ...defaultConfig
+      }
+
+      const logger = createLogger(loggerConfig)
+      expect(logger.getConfig()).toMatchObject(defaultConfig)
     })
   })
 
@@ -165,15 +189,133 @@ describe('Loggerhead', () => {
           masking: { enabled: false, rules: [] }
         }
         const logger = createLogger(loggerConfig)
-        console.log(logger)
-        // const spy = jest.spyOn(logger, 'instance').mockImplementation()
+        logger.getTimestamp = jest.fn(() => timestamp)
+        const spy = jest.spyOn(logger, 'instance').mockImplementation()
+        logger.info('test with email: martingegan@gmail.com')
+        expect(spy).toHaveBeenCalledWith(
+          '%j',
+          timestamp,
+          'INFO',
+          'test with email: martingegan@gmail.com'
+        )
       })
 
-      // it('Should should be masked when it is enabled in confifg', () => {
-      //   const loggerConfig = { ...defaultConfig, level: LogLevels.ALL }
-      //   const logger = createLogger(loggerConfig)
-      //   const spy = jest.spyOn(logger, 'instance').mockImplementation()
-      // })
+      it('Should be masked if masking is enabled', () => {
+        const loggerConfig = {
+          ...defaultConfig,
+          level: LogLevels.ALL,
+          masking: { enableDefaults: { email: true }, enabled: true, rules: [] }
+        }
+        const logger = createLogger(loggerConfig)
+        logger.getTimestamp = jest.fn(() => timestamp)
+        const spy = jest.spyOn(logger, 'instance').mockImplementation()
+        logger.info('test with email: martingegan@gmail.com')
+        expect(spy).toHaveBeenCalledWith('%j', timestamp, 'INFO', 'test with email: ***@****.***')
+      })
+    })
+
+    describe('Phone numbers', () => {
+      it('Should not be masked if masking is disabled', () => {
+        const loggerConfig = {
+          ...defaultConfig,
+          level: LogLevels.ALL,
+          masking: { enabled: false, rules: [] }
+        }
+        const logger = createLogger(loggerConfig)
+        logger.getTimestamp = jest.fn(() => timestamp)
+        const spy = jest.spyOn(logger, 'instance').mockImplementation()
+        logger.info('test with phone: 07748 443124')
+        expect(spy).toHaveBeenCalledWith('%j', timestamp, 'INFO', 'test with phone: 07748 443124')
+      })
+
+      it('Should be masked if masking is enabled', () => {
+        const loggerConfig = {
+          ...defaultConfig,
+          level: LogLevels.ALL,
+          masking: { enableDefaults: { phone: true }, enabled: true, rules: [] }
+        }
+        const logger = createLogger(loggerConfig)
+        logger.getTimestamp = jest.fn(() => timestamp)
+        const spy = jest.spyOn(logger, 'instance').mockImplementation()
+        logger.info('test with phone: 07748 443124')
+        expect(spy).toHaveBeenCalledWith('%j', timestamp, 'INFO', 'test with phone: ***** ******')
+      })
+    })
+
+    describe('Postcodes', () => {
+      it('Should not be masked if masking is disbled', () => {
+        const loggerConfig = {
+          ...defaultConfig,
+          level: LogLevels.ALL,
+          masking: { enabled: false, rules: [] }
+        }
+        const logger = createLogger(loggerConfig)
+        logger.getTimestamp = jest.fn(() => timestamp)
+        const spy = jest.spyOn(logger, 'instance').mockImplementation()
+        logger.info('test with postcode: GU21 1GQ')
+        expect(spy).toHaveBeenCalledWith('%j', timestamp, 'INFO', 'test with postcode: GU21 1GQ')
+      })
+
+      it('Should be masked if masking is enabled', () => {
+        const loggerConfig = {
+          ...defaultConfig,
+          level: LogLevels.ALL,
+          masking: { enableDefaults: { postcode: true }, enabled: true, rules: [] }
+        }
+        const logger = createLogger(loggerConfig)
+        logger.getTimestamp = jest.fn(() => timestamp)
+        const spy = jest.spyOn(logger, 'instance').mockImplementation()
+        logger.info('test with postcode: GU21 1GQ')
+        expect(spy).toHaveBeenCalledWith('%j', timestamp, 'INFO', 'test with postcode: **** ***')
+      })
+    })
+
+    describe('Passwords', () => {
+      it('Should not be masked if masking is disbled', () => {
+        const loggerConfig = {
+          ...defaultConfig,
+          level: LogLevels.ALL,
+          masking: { enabled: false, rules: [] }
+        }
+        const logger = createLogger(loggerConfig)
+        logger.getTimestamp = jest.fn(() => timestamp)
+        const spy = jest.spyOn(logger, 'instance').mockImplementation()
+        logger.info({
+          password: 'somepassword',
+          secret: 'somesecret',
+          myPassword: 'myPassword',
+          mySecret: 'mySecret'
+        })
+        expect(spy).toHaveBeenCalledWith('%j', timestamp, 'INFO', {
+          myPassword: 'myPassword',
+          mySecret: 'mySecret',
+          password: 'somepassword',
+          secret: 'somesecret'
+        })
+      })
+
+      it('Should be masked if masking is enabled', () => {
+        const loggerConfig = {
+          ...defaultConfig,
+          level: LogLevels.ALL,
+          masking: { enableDefaults: { password: true }, enabled: true, rules: [] }
+        }
+        const logger = createLogger(loggerConfig)
+        logger.getTimestamp = jest.fn(() => timestamp)
+        const spy = jest.spyOn(logger, 'instance').mockImplementation()
+        logger.info({
+          password: 'somepassword',
+          secret: 'somesecret',
+          myPassword: 'myPassword',
+          mySecret: 'mySecret'
+        })
+        expect(spy).toHaveBeenCalledWith('%j', timestamp, 'INFO', {
+          myPassword: '***********',
+          mySecret: '***********',
+          password: '***********',
+          secret: '***********'
+        })
+      })
     })
   })
 })

@@ -9,8 +9,8 @@ export default class Loggerhead {
   private _config: LoggerheadConfig
   public instance: IDebugger
   private level: LogLevels
-  private timestamp: boolean
-  private timestampFormat: string
+  private timestamp?: boolean
+  private timestampFormat?: string
   private masker: DataMaskingUtils | null = null
 
   constructor(config: LoggerheadConfig) {
@@ -20,10 +20,8 @@ export default class Loggerhead {
     this.instance = debug(configObj.namespace)
     this.instance.enabled = configObj.enabled
     this.level = configObj.level
-    this.timestamp = configObj.timeStamp ? configObj.timeStamp : true
+    this.timestamp = configObj.timeStamp
     this.timestampFormat = configObj.timeStampFormat
-      ? configObj.timeStampFormat
-      : 'YYYY-MM-DD HH:mm:ss'
 
     if (this._config.masking && this._config.masking.enabled) {
       this.masker = new DataMaskingUtils(this._config.masking)
@@ -74,9 +72,9 @@ export default class Loggerhead {
   }
 
   private cleanArgs(...args: any | any[]) {
-    if (this.masker && this._config.masking.enabled) {
+    if (this.masker) {
       args = args.map((arg: any) => {
-        return this.masker ? this.masker.cleanseData(arg) : arg
+        return this.masker && this.masker.cleanseData(arg)
       })
 
       return args
@@ -85,7 +83,7 @@ export default class Loggerhead {
     }
   }
 
-  private getTimestamp() {
+  public getTimestamp() {
     return dayjs().format(this.timestampFormat)
   }
 }

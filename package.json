@@ -69,6 +69,7 @@
     "cross-env": "^6.0.3",
     "jest": "^24.9.0",
     "jest-config": "^24.9.0",
+    "mockdate": "^2.0.5",
     "nodemon": "^1.19.4",
     "rimraf": "^3.0.0",
     "rollup-plugin-typescript2": "^0.24.3",
