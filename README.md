@@ -28,6 +28,19 @@ To install with npm run:
 npm -i @cornerstone-digital/loggerhead
 ```
 
+## Supported Log Levels
+
+```
+OFF: 0 or LogLevels.OFF
+FATAL: 1 or LogLevels.FATAL
+ERROR: 2 or LogLevels.ERROR
+WARN: 3 or LogLevels.WARN
+INFO: 4 or LogLevels.INFO
+DEBUG: 5 or LogLevels.DEBUG
+TRACE: 6 or LogLevels.TRACE
+ALL: 7 or LogLevels.ALL
+```
+
 ## Usage
 
 To initialise a logger instance you can use the below code:
