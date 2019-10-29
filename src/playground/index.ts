@@ -1,11 +1,13 @@
 import Loggerhead from '../index'
 import { LoggerheadConfig, LogLevels } from '../types/index.types'
+import getConfig from '../config/validator'
 
-const config: LoggerheadConfig = {
+const config: LoggerheadConfig = getConfig({
   namespace: 'Loggerhead',
   enabled: true,
   level: LogLevels.ALL,
   timeStamp: true,
+  logDir: process.cwd() + '/.logs',
   masking: {
     enabled: true,
     enableDefaults: {
@@ -29,7 +31,7 @@ const config: LoggerheadConfig = {
       }
     ]
   }
-}
+})
 
 const logger: Loggerhead = new Loggerhead(config)
 

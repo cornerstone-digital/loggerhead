@@ -10,6 +10,7 @@ const configSchema = {
     level: { enum: [0, 1, 2, 3, 4, 5, 6, 7], default: 2 },
     timeStamp: { type: 'boolean', default: true },
     timeStampFormat: { type: 'string', default: 'YYYY-MM-DD HH:mm:ss' },
+    logDir: { type: 'string', default: `${process.cwd()}/logs` },
     masking: {
       default: {},
       properties: {

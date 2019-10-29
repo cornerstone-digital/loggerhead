@@ -27,6 +27,7 @@ export interface LoggerheadConfig {
   timeStamp?: boolean
   timeStampFormat?: string
   masking: DataMaskingConfig
+  logDir: string
 }
 
 export enum LogLevels {
