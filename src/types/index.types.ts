@@ -27,7 +27,18 @@ export interface LoggerheadConfig {
   timeStamp?: boolean
   timeStampFormat?: string
   masking: DataMaskingConfig
-  logDir: string
+  logFile: {
+    enabled: boolean
+    fileName: string
+    options: {
+      path: string
+      interval?: string
+      compress?: boolean
+      immutable?: boolean
+      size?: string
+      maxFiles?: number
+    }
+  }
 }
 
 export enum LogLevels {

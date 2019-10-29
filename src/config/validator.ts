@@ -10,7 +10,20 @@ const configSchema = {
     level: { enum: [0, 1, 2, 3, 4, 5, 6, 7], default: 2 },
     timeStamp: { type: 'boolean', default: true },
     timeStampFormat: { type: 'string', default: 'YYYY-MM-DD HH:mm:ss' },
-    logDir: { type: 'string', default: `${process.cwd()}/logs` },
+    logFile: {
+      enabled: { type: 'boolean', default: true },
+      fileName: { type: 'string', default: 'logfile.log' },
+      options: {
+        properties: {
+          path: { type: 'string', default: `${process.cwd()}/.logs` },
+          interval: { type: 'string', default: '1d' },
+          compress: { type: 'boolean', default: true },
+          immutable: { type: 'boolean', default: true },
+          size: { type: 'string', default: '10M' },
+          maxFiles: { type: 'number', default: 7 }
+        }
+      }
+    },
     masking: {
       default: {},
       properties: {

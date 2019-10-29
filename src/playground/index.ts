@@ -7,7 +7,16 @@ const config: LoggerheadConfig = getConfig({
   enabled: true,
   level: LogLevels.ALL,
   timeStamp: true,
-  logDir: process.cwd() + '/.logs',
+  logFile: {
+    enabled: true,
+    fileName: 'debug.log',
+    options: {
+      path: `${process.cwd()}/.logs`,
+      compress: true,
+      size: '10M',
+      maxFiles: 5
+    }
+  },
   masking: {
     enabled: true,
     enableDefaults: {
@@ -36,7 +45,8 @@ const config: LoggerheadConfig = getConfig({
 const logger: Loggerhead = new Loggerhead(config)
 
 logger.info(
-  '"decryptedToken eyJhbGciOiJIUzI1NiJ9.eyJwbGF0Zm9ybV9zZXNzaW9uX2lkIjoiNzYxZjRlMjAtZDkwNC00MmZhLTlhYjktNzA3MmUwMDAwZDZmIiwiYXNzdXJhbmNlX2xldmVsIjoiMCIsImp0aSI6IkVTSE9QIiwiaWF0IjoxNTcxOTg3MTI4LCJzdWIiOiJhdXRob3JpemF0aW9uIiwiaXNzIjoiREFMIiwiZXhwIjoxNTcyMDczNTI4fQ.H7H3mkUmp-99DXSmht6Eu7-3a7Oq2OYtL_CHqQ8g_z8'
+  'decryptedToken',
+  'eyJhbGciOiJIUzI1NiJ9.eyJwbGF0Zm9ybV9zZXNzaW9uX2lkIjoiNzYxZjRlMjAtZDkwNC00MmZhLTlhYjktNzA3MmUwMDAwZDZmIiwiYXNzdXJhbmNlX2xldmVsIjoiMCIsImp0aSI6IkVTSE9QIiwiaWF0IjoxNTcxOTg3MTI4LCJzdWIiOiJhdXRob3JpemF0aW9uIiwiaXNzIjoiREFMIiwiZXhwIjoxNTcyMDczNTI4fQ.H7H3mkUmp-99DXSmht6Eu7-3a7Oq2OYtL_CHqQ8g_z8'
 )
 
 logger.info({

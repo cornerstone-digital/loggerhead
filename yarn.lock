@@ -3731,6 +3731,11 @@ log-symbols@^2.2.0:
   dependencies:
     chalk "^2.0.1"
 
+logrotator@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/logrotator/-/logrotator-1.1.0.tgz#b0fe5aa44485848572569429cfd0d47f772b4e25"
+  integrity sha1-sP5apESFhIVyVpQpz9DUf3crTiU=
+
 loose-envify@^1.0.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
@@ -5274,6 +5279,11 @@ rollup@^1.1.2:
     "@types/estree" "*"
     "@types/node" "*"
     acorn "^7.1.0"
+
+rotating-file-stream@^1.4.6:
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/rotating-file-stream/-/rotating-file-stream-1.4.6.tgz#42725b951835f6c3b5c16f8f6126e65758ef1d61"
+  integrity sha512-QS7vGxBK6sGc1mCqlmAuwV4J0fmmVCKaUgMvKbkTueZr4jdkXN3bSpTEOQxtdtAVEzi1aUqdHzwIQ0ejNn+CQg==
 
 rsvp@^4.8.4:
   version "4.8.5"
