@@ -54,6 +54,16 @@ const loggerConfig: LoggerheadConfig = {
   level: LogLevels.ALL,
   timeStamp: true,
   timeStampFormat: 'YYYY-MM-DD HH:mm:ss',
+  logFile: {
+    enabled: true /* Enable logging to file */,
+    fileName: 'debug.log' /* Filename to use */,
+    options: {
+      path: `${process.cwd()}/.logs` /* Log file location */,
+      compress: true /* Enable compression */,
+      size: '10M' /* Max file size before rotation */,
+      maxFiles: 5 /* Max number of files to keep */
+    }
+  },
   masking: {
     enabled: true,
     enableDefaults: {
