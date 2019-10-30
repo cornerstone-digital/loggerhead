@@ -1,6 +1,6 @@
 {
   "name": "@cornerstone-digital/loggerhead",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "main": "dist/loggerhead.cjs.js",
   "module": "dist/loggerhead.esm.js",
   "license": "MIT",

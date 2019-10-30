@@ -11,16 +11,20 @@ const configSchema = {
     timeStamp: { type: 'boolean', default: true },
     timeStampFormat: { type: 'string', default: 'YYYY-MM-DD HH:mm:ss' },
     logFile: {
-      enabled: { type: 'boolean', default: true },
-      fileName: { type: 'string', default: 'logfile.log' },
-      options: {
-        properties: {
-          path: { type: 'string', default: `${process.cwd()}/.logs` },
-          interval: { type: 'string', default: '1d' },
-          compress: { type: 'boolean', default: true },
-          immutable: { type: 'boolean', default: true },
-          size: { type: 'string', default: '10M' },
-          maxFiles: { type: 'number', default: 7 }
+      default: {},
+      properties: {
+        enabled: { type: 'boolean', default: true },
+        fileName: { type: 'string', default: 'debug.log' },
+        options: {
+          default: {},
+          properties: {
+            path: { type: 'string', default: `${process.cwd()}/.logs` },
+            interval: { type: 'string', default: '1d' },
+            compress: { type: 'boolean', default: true },
+            immutable: { type: 'boolean', default: false },
+            size: { type: 'string', default: '10M' },
+            maxFiles: { type: 'number', default: 7 }
+          }
         }
       }
     },

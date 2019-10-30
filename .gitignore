@@ -3,3 +3,4 @@ coverage
 dist
 .logs
 yarn-error.log
+.DS_Store
