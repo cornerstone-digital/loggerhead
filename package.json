@@ -16,7 +16,8 @@
     "test:watch": "jest --coverage --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "start": "ts-node ./src/playground/index.ts",
-    "playground": "cross-env DEBUG=Loggerhead* nodemon --exec yarn start"
+    "playground": "cross-env DEBUG=Loggerhead* nodemon --exec yarn start",
+    "publish": "yarn build && npm publish"
   },
   "jest": {
     "transform": {
