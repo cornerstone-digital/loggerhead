@@ -12,6 +12,7 @@ export * from './types/index.types'
 export default class Loggerhead {
   private _config: LoggerheadConfig
   public instance: IDebugger
+  public namespace: string
   private level: LogLevels
   private timestamp?: boolean
   private timestampFormat?: string
@@ -22,6 +23,7 @@ export default class Loggerhead {
     const configObj: LoggerheadConfig = getConfig(config)
 
     this._config = configObj
+    this.namespace = configObj.namespace
     this.instance = debug(configObj.namespace)
     this.instance.enabled = configObj.enabled
     this.level = configObj.level
@@ -53,15 +55,16 @@ export default class Loggerhead {
   }
 
   public generateLogName(time: any = new Date(), index: number) {
-    console.log('called')
-    if (!time) return 'debug.log'
+    if (!time) return this._config.logFile.fileName
 
     let month = time.getFullYear() + '' + this.pad(time.getMonth() + 1)
     let day = this.pad(time.getDate())
     let hour = this.pad(time.getHours())
     let minute = this.pad(time.getMinutes())
 
-    return month + '/' + month + day + '-' + hour + minute + '-' + index + 'debug.log'
+    return (
+      month + '/' + month + day + '-' + hour + minute + '-' + index + this._config.logFile.fileName
+    )
   }
 
   public getConfig() {
@@ -80,7 +83,7 @@ export default class Loggerhead {
       })
       .join(' ')
 
-    return `${args[0]}:${args[1]} ${logData}`
+    return `${args[0]} ${this.namespace} ${args[1]} ${logData}`
   }
 
   public log(level: LogLevels, ...args: any | any[]) {
