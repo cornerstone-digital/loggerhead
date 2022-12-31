@@ -85,7 +85,7 @@
     "ajv": "^6.10.2",
     "dayjs": "^1.8.16",
     "debug": "^4.1.1",
-    "flat": "^5.0.0",
+    "flat": "^5.0.1",
     "logrotator": "^1.1.0",
     "rotating-file-stream": "^1.4.6",
     "tslib": "^1.10.0"
